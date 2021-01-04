@@ -5,50 +5,72 @@
 
         <link rel="stylesheet"
 		  type="style/css"
-		  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
     </head>
 
     <body>
         <h1>Welcome to 8 Board Solver</h1>
         <canvas class="canvas" id="canvas" height="400" width="400" style="background-color: #3e3e3e;"></canvas>
-        <h3>Board Size:</h3>
-        <select class="selector" id="boardSize">
-            <option value="2">2</option>
-            <option value="3" selected="selected">3</option>
-			<option value='4'>4</option>
-			<option value='5'>5</option>
-			<option value='6'>6</option>
-        </select>
+        <br>
+        
+        <div class="container" >
+            <div class="row" style="margin: 10px;">
+                <label for="boardSize" class="form-label">Board Size: </label>
+                <select id="boardSize" class="form-control" onchange="changeLength(value)">
+                    <option value="2">2</option>
+                    <option value="3" selected="selected">3</option>
+                    <option value='4'>4</option>
+                    <option value='5'>5</option>
+                </select>
+            </div>
 
-        <h3>Algorithm:</h3>
-        <select class="selector">
-            <option value="A*" selected="select">A*</option>
-            <option value="GreedyBest">Greedy-Best</option>
-			<option value='UniformCost'>Uniform-Cost</option>
-			<option value='IterativeDeepening'>Iterative-Deepening </option>
-			<option value='BFS'>Breadth-First</option>
-			<option value='DFS'>Depth-First</option>
-        </select>
-        <h3>Iteration Limit:</h3>
-        <input type="text" style="display: block;" placeholder="Enter Max # of Iterations"></input>
+            <div class="row" style="margin: 10px;">
+                <button onclick="setup()">Randomize</button>
+            </div>
 
+            <div class="row" style="margin: 10px;">
+                <label for="algorithm" class="form-label">Algorithm: </label>
+                <select class="selector" id="algorithm">
+                    <option value="A*" selected="select">A*</option>
+                    <option value="GreedyBest">Greedy-Best</option>
+                    <option value='UniformCost'>Uniform-Cost</option>
+                    <option value='IterativeDeepening'>Iterative-Deepening </option>
+                    <option value='BFS'>Breadth-First</option>
+                    <option value='DFS'>Depth-First</option>
+                </select>
+            </div>
+
+            <div class="row" style="margin: 10px;">
+                <label for="iterations" class="form-label">Iteration Limit: </label>
+                <input id="iterations" type="text" class="form-control" placeholder="Enter Max # of Iterations"></input>
+            </div>
+        </div>       
     </body>
-
-    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="Stylesheet"></link>
-	<script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"> </script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet"></link>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
 
     <script>
         const canvas = document.querySelector(".canvas");
         const ctx = canvas.getContext("2d");
         ctx.lineWidth = 5;
 
+        function changeLength(n){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(10, 10, 380, 380);
+            drawGrid(n);
+            randomBoard(n);
+        }
+
         function getRandomInt(max) {
             return Math.floor(Math.random() * Math.floor(max));
         }
 
         function drawTiles(n, tiles) {
-            tileWidth = (400 - 20 - 10)/3
+            tileWidth = (400 - 20 - 10)/n
             interval = tileWidth + 5;
             counter = 0;
             for (i = 0; i < n; i++){
@@ -58,7 +80,7 @@
                         ctx.fillRect(interval * i + 10, interval * j + 10, tileWidth, tileWidth);
                     }
                     else {
-                        ctx.font = "50px Arial";
+                        ctx.font = "30px Arial";
                         ctx.fillStyle = "#000000";
                         ctx.fillText(tiles[counter], (tileWidth / 2)  + interval * i, (tileWidth / 2 + 20) + interval * j);
                     }
