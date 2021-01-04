@@ -45,6 +45,10 @@
                 <label for="iterations" class="form-label">Iteration Limit: </label>
                 <input id="iterations" type="text" class="form-control" placeholder="Enter Max # of Iterations"></input>
             </div>
+
+            <div class="row" style="margin: 10px;">
+                <button onclick="solveBoard()">Solve!</button>
+            </div>
         </div>       
     </body>
     
@@ -56,6 +60,15 @@
         const canvas = document.querySelector(".canvas");
         const ctx = canvas.getContext("2d");
         ctx.lineWidth = 5;
+
+        function solveBoard(){
+            let algorithm = $('#algorithm').val();
+            let iterations = $('#iterations').val();
+            
+            console.log(algorithm);
+            console.log(iterations);
+
+        }
 
         function changeLength(n){
             ctx.clearRect(0, 0, canvas.width, canvas.height);
