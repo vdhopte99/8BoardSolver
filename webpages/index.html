@@ -6,9 +6,22 @@
 
     <body>
         <h1>Welcome to 8 Board Solver</h1>
-        <canvas class="canvas" height="300" width="300" style="background-color: #3e3e3e;"></canvas>
+        <canvas class="canvas" height="400" width="400" style="background-color: #3e3e3e;"></canvas>
+        <h3>Board Size:</h3>
         <input type="text" style="display: block;" placeholder="Enter Board Size"></input>
-        
+        <h3>Algorithm:</h3>
+        <select class="selector">
+            <option value="A*" selected="select">A*</option>
+            <option value="GreedyBest">Greedy-Best</option>
+			<option value='UniformCost'>Uniform-Cost</option>
+			<option value='IterativeDeepening'>Iterative-Deepening </option>
+			<option value='BFS'>Breadth-First</option>
+			<option value='DFS'>Depth-First</option>
+        </select>
+        <h3>Iteration Limit:</h3>
+        <input type="text" style="display: block;" placeholder="Enter Max # of Iterations"></input>
+
+
     </body>
 
     <script type="text/javascript" src="draw.js"></script>
