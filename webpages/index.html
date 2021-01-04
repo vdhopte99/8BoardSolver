@@ -2,13 +2,24 @@
 <html>
     <head>
         <title>8 Board Solver</title>
+
+        <link rel="stylesheet"
+		  type="style/css"
+		  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     </head>
 
     <body>
         <h1>Welcome to 8 Board Solver</h1>
-        <canvas class="canvas" height="400" width="400" style="background-color: #3e3e3e;"></canvas>
+        <canvas class="canvas" id="canvas" height="400" width="400" style="background-color: #3e3e3e;"></canvas>
         <h3>Board Size:</h3>
-        <input type="text" style="display: block;" placeholder="Enter Board Size"></input>
+        <select class="selector" id="boardSize">
+            <option value="2">2</option>
+            <option value="3" selected="selected">3</option>
+			<option value='4'>4</option>
+			<option value='5'>5</option>
+			<option value='6'>6</option>
+        </select>
+
         <h3>Algorithm:</h3>
         <select class="selector">
             <option value="A*" selected="select">A*</option>
@@ -21,8 +32,87 @@
         <h3>Iteration Limit:</h3>
         <input type="text" style="display: block;" placeholder="Enter Max # of Iterations"></input>
 
-
     </body>
 
-    <script type="text/javascript" src="draw.js"></script>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="Stylesheet"></link>
+	<script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"> </script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
+
+    <script>
+        const canvas = document.querySelector(".canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.lineWidth = 5;
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        function drawTiles(n, tiles) {
+            tileWidth = (400 - 20 - 10)/3
+            interval = tileWidth + 5;
+            counter = 0;
+            for (i = 0; i < n; i++){
+                for (j = 0; j < n; j++){
+                    if (tiles[counter] === 0){
+                        ctx.fillStyle = "#000000";
+                        ctx.fillRect(interval * i + 10, interval * j + 10, tileWidth, tileWidth);
+                    }
+                    else {
+                        ctx.font = "50px Arial";
+                        ctx.fillStyle = "#000000";
+                        ctx.fillText(tiles[counter], (tileWidth / 2)  + interval * i, (tileWidth / 2 + 20) + interval * j);
+                    }
+                    counter++;
+                }
+            }
+        }
+
+        function randomBoard(n) {
+            var used = [];
+            for (i = 0; i < n*n; i++) {
+                used.push(false);
+            }
+
+            console.log(used);
+
+            tiles = [];
+            max = n * n;
+            for (i = 0; i < n*n; i++) {
+                x = getRandomInt(max);
+                while (used[x] === true) {
+                    x = getRandomInt(max);
+                }
+                used[x] = true;
+                tiles.push(x);
+            }
+            drawTiles(n, tiles);
+        }
+
+        function drawGrid(n){
+            let interval = 380 / n;
+
+            ctx.beginPath();
+
+            for (i = 0; i < n - 1; i++) {
+                ctx.moveTo(interval * (i + 1) + 10, 10);
+                ctx.lineTo(interval * (i + 1) + 10, 390);
+                ctx.stroke();
+
+                ctx.moveTo(10, interval * (i + 1) + 10);
+                ctx.lineTo(390, interval * (i + 1) + 10);
+                ctx.stroke();
+            }
+        }
+
+        function setup(){
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(10, 10, 380, 380);
+
+            let n = $('#boardSize').val();
+            drawGrid(n);
+            randomBoard(n);
+		}
+
+		$('document').ready(setup);
+    </script>
 </html>
