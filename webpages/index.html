@@ -11,7 +11,7 @@
 
     <body>
         <h1>Welcome to 8 Board Solver</h1>
-        <canvas class="canvas" id="canvas" height="400" width="400" style="background-color: #3e3e3e;"></canvas>
+        <canvas class="canvas" id="canvas" height="600" width="600" style="background-color: #ffffff; border: 2px solid #000000;"></canvas>
         <br>
         
         <div class="container" >
@@ -28,6 +28,12 @@
             <div class="row" style="margin: 10px;">
                 <button onclick="setup()">Randomize</button>
             </div>
+
+            <!-- <div class="row" style="margin: 10px;">
+                <form onsubmit="drawTiles(boardSize, customBoard)"
+                <label for="customBoard" class="form-label">Custom Board: </label>
+                <input id="customBoard" type="text" class="form-control" placeholder="Enter Max # of Iterations"></input>
+            </div> -->
 
             <div class="row" style="margin: 10px;">
                 <label for="algorithm" class="form-label">Algorithm: </label>
@@ -59,21 +65,34 @@
     <script>
         const canvas = document.querySelector(".canvas");
         const ctx = canvas.getContext("2d");
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 2;
+
+        let board = [];
 
         function solveBoard(){
             let algorithm = $('#algorithm').val();
             let iterations = $('#iterations').val();
             
-            console.log(algorithm);
-            console.log(iterations);
+            algorithm = encodeURIComponent(algorithm);
+            iterations = encodeURIComponent(iterations);
+
+            let url = '/solveBoard?algorithm=' + algorithm + '&iterations=' + iterations
+
+            if (request != null)
+               request.abort();
+
+            request = $.ajax(
+               {
+                  type: 'GET',
+                  url: url,
+                  success: handleResponse
+               }
+            );
 
         }
 
         function changeLength(n){
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillRect(10, 10, 380, 380);
             drawGrid(n);
             randomBoard(n);
         }
@@ -82,70 +101,93 @@
             return Math.floor(Math.random() * Math.floor(max));
         }
 
-        function drawTiles(n, tiles) {
-            tileWidth = (400 - 20 - 10)/n
-            interval = tileWidth + 5;
-            counter = 0;
+        function drawBoard(n, board) {
+            w = canvas.width / n;
+            ctx.font = "30px Arial";
+            ctx.textAlign = 'center'
             for (i = 0; i < n; i++){
                 for (j = 0; j < n; j++){
-                    if (tiles[counter] === 0){
+                    val = board[i][j];
+                    if (val == 0){
                         ctx.fillStyle = "#000000";
-                        ctx.fillRect(interval * i + 10, interval * j + 10, tileWidth, tileWidth);
+                        ctx.fillRect(i * w, j * w, w, w);
+
                     }
-                    else {
-                        ctx.font = "30px Arial";
-                        ctx.fillStyle = "#000000";
-                        ctx.fillText(tiles[counter], (tileWidth / 2)  + interval * i, (tileWidth / 2 + 20) + interval * j);
-                    }
-                    counter++;
+                    ctx.fillText(val, i * w + w/2, j * w + w/2);
                 }
             }
         }
 
-        function randomBoard(n) {
+        function randomBoard() {
+            n = $('#boardSize').val();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid(n);
             var used = [];
             for (i = 0; i < n*n; i++) {
                 used.push(false);
             }
 
-            console.log(used);
-
-            tiles = [];
-            max = n * n;
-            for (i = 0; i < n*n; i++) {
-                x = getRandomInt(max);
-                while (used[x] === true) {
-                    x = getRandomInt(max);
-                }
-                used[x] = true;
-                tiles.push(x);
+            if (n === 2){
+                board = [
+                    [0, 0],
+                    [0, 0]
+                ];
             }
-            drawTiles(n, tiles);
+            else if (n === 3){
+                board = [
+                    [0, 0, 0],
+                    [0, 0, 0],
+                    [0, 0, 0]
+                ];
+            }
+            else if (n === 4){
+                board = [
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ];
+            }
+            else {
+                board = [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0]
+                ];
+            }
+
+            numTiles = n * n;
+            for (i = 0; i < n; i++) {
+                for (j = 0; j < n; j++){
+                    x = getRandomInt(numTiles);
+                    while (used[x] === true) {
+                        x = getRandomInt(numTiles);
+                    }
+                    used[x] = true;
+                    board[i][j] = x;
+                }
+            }
+            console.log(board);
+            drawBoard(n, board);
         }
 
         function drawGrid(n){
-            let interval = 380 / n;
-
+            let w = canvas.width / n;
             ctx.beginPath();
-
-            for (i = 0; i < n - 1; i++) {
-                ctx.moveTo(interval * (i + 1) + 10, 10);
-                ctx.lineTo(interval * (i + 1) + 10, 390);
-                ctx.stroke();
-
-                ctx.moveTo(10, interval * (i + 1) + 10);
-                ctx.lineTo(390, interval * (i + 1) + 10);
-                ctx.stroke();
+            for (i = 0; i < n + 1; i++){
+                for (j = 0; j < n + 1; j++){
+                    ctx.rect(i * w, j * w, w, w);
+                    ctx.stroke();
+                }
             }
         }
 
         function setup(){
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillRect(10, 10, 380, 380);
-
             let n = $('#boardSize').val();
             drawGrid(n);
-            randomBoard(n);
+            randomBoard();
 		}
 
 		$('document').ready(setup);
