@@ -56,6 +56,10 @@
 
             <div class="row" style="margin: 10px;">
                 <button onclick="solveBoard()">Solve!</button>
+                {% if solvable == False: %}
+                <br>
+                <small>Sorry! Board is not solvable</small>
+                {% endif %}
             </div>
         </div>       
     </body>
@@ -71,41 +75,26 @@
 
         let board = [];
 
-        //function solveBoard(){
-            // let boardSize = $('#boardSize').val();
-            // let algorithm = $('#algorithm').val();
-            // let iterations = $('#iterations').val();
-            // let customboard = $('#customboard').val();
+        let request = null;
 
-            // if ((/[abcdefghijklmnopqrstuvwzyABCDEFGHIJKLMNOPQRSTUVWXYZ]/).test(customboard)){
-            //     alert("Custom Board should have integer characters only");
-            //     return false;
-            // }
+        function solveBoard(){
+            let boardSize = parseInt($('#boardSize').val());
+            let algorithm = $('#algorithm').val();
+            let iterations = parseInt($('#iterations').val());
 
-            // let ascii = /[`!@#$%/^&*~()_/-/+/={}?<>.,:;\[\]\-|\'\\\/""]/;
-            // if (ascii.test(customboard)){
-            //     alert("Custom Board should have integer characters only");
-            //     return false;
-            // }
+            board = encodeURIComponent(board);
+            boardSize = encodeURIComponent(boardSize);
+            algorithm = encodeURIComponent(algorithm);
+            iterations = encodeURIComponent(iterations);
 
-            // algorithm = encodeURIComponent(algorithm);
-            // iterations = encodeURIComponent(iterations);
-            
+            let url = '/solveBoard?board=' + board + '&boardSize=' + boardSize + '&algorithm=' + algorithm + '&iterations=' + iterations;
 
-            // let url = '/solveBoard?algorithm=' + algorithm + '&iterations=' + iterations
+            window.location.replace(url);
+        }
 
-            // if (request != null)
-            //    request.abort();
-
-            // request = $.ajax(
-            //    {
-            //       type: 'GET',
-            //       url: url,
-            //       success: handleResponse
-            //    }
-            // );
-
-        //}
+        function handleResponse(){
+            $('#document').html(response);
+        }
 
         function getRandomInt(max) {
             return Math.floor(Math.random() * Math.floor(max));
@@ -114,7 +103,7 @@
         function drawBoard(board) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawGrid();
-            n = $('#boardSize').val();
+            n = parseInt($('#boardSize').val());
             w = canvas.width / n;
             ctx.font = "30px Arial";
             ctx.textAlign = 'center'
@@ -123,10 +112,10 @@
                     val = board[i][j];
                     if (val == 0){
                         ctx.fillStyle = "#000000";
-                        ctx.fillRect(i * w, j * w, w, w);
+                        ctx.fillRect(j * w, i * w, w, w);
 
                     }
-                    ctx.fillText(val, i * w + w/2, j * w + w/2);
+                    ctx.fillText(val, j * w + w/2, i * w + w/2);
                 }
             }
         }
@@ -148,12 +137,16 @@
             ints = boardString.split(" ").join("");
             ints = ints.split(",");
 
-            n = $('#boardSize').val();
+            n = parseInt($('#boardSize').val());
             numTiles = n * n;
 
             if (ints.length !== n * n){
                 alert("Number of tiles does not match board size. Please remember to enter in proper format");
                 return false;
+            }
+
+            for (i = 0; i < ints.length; i++){
+                ints[i] = parseInt(ints[i]);
             }
 
             if (n === 2){
@@ -192,33 +185,30 @@
                 used.push(false);
             }
 
-            console.log(temp);
-            console.log(used);
-            
             counter = 0;
-            for (i = 0; i < numTiles; i++){
-                for (j = 0; j < numTiles; j++){
+            for (i = 0; i < n; i++){
+                for (j = 0; j < n; j++){
 
                     if (ints[counter] > numTiles - 1){
                         alert("Out of range tile value. Please review custom input and board size");
                         return false;
                     }
 
-                    // if (used[ints[counter]] === true){
-                    //     alert("Repeated tile value. Please review custom input");
-                    //     return false;
-                    // }
+                    if (used[ints[counter]] === true){
+                        alert("Repeated tile value. Please review custom input");
+                        return false;
+                    }
                     used[ints[counter]] = true;
                     temp[i][j] = ints[counter]; 
+                    counter++;
                 }   
             }
-            console.log("done!!!");
             board = temp;
             drawBoard(board);
         }
 
         function randomBoard(){
-            n = $('#boardSize').val();
+            n = parseInt($('#boardSize').val());
             var used = [];
             for (i = 0; i < n*n; i++) {
                 used.push(false);
@@ -231,11 +221,7 @@
                 ];
             }
             else if (n === 3){
-                board = [
-                    [0, 0, 0],
-                    [0, 0, 0],
-                    [0, 0, 0]
-                ];
+                board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
             }
             else if (n === 4){
                 board = [
@@ -266,6 +252,7 @@
                     board[i][j] = x;
                 }
             }
+            $('#customBoard').val("");
             return board;
         }
 
@@ -282,8 +269,22 @@
         }
 
         function setup(){
-            random = randomBoard();
-            drawBoard(random);
+            var initialBoard = '{{initialBoard}}';
+            var solutionTree = '{{solutionTree}}';
+            var solvable = '{{solvable}}';
+            
+            console.log(initialBoard);
+            console.log(solutionTree);
+            console.log(solvable);
+
+            if (initialBoard != ""){
+                initialBoard = decodeURIComponent(initialBoard);
+                drawBoard(initialBoard);
+            }
+            else{
+                random = randomBoard();
+                drawBoard(random); 
+            }
 		}
 
 		$('document').ready(setup);
