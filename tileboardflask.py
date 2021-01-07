@@ -18,7 +18,7 @@ app = Flask(__name__, template_folder='webpages')
 
 @app.route('/', methods=['GET'])
 def home():
-    html = render_template('index.html')
+    html = render_template('enterBoard.html')
     response = make_response(html)
     return response
 
@@ -52,8 +52,10 @@ def solveBoard():
             solutionTree.append(board.tilescopy)
 
     else:
-        solutionTree = None
+        html = render_template('enterBoard.html', solvable=solvable, initialBoard = ogboard.tilescopy, boardLength = ogboard.size())
+        response = make_response(html)
+        return response
 
-    html = render_template('index.html', initialBoard = ogboard.tilescopy, solutionTree = solutionTree, solvable = solvable)
+    html = render_template('solvedBoard.html', initialBoard = ogboard.tilescopy, solutionTree = solutionTree, boardLength = ogboard.size())
     response = make_response(html)
     return response
