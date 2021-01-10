@@ -21,7 +21,7 @@
                     <canvas class="canvas" id="canvas" height="600" width="600" style="background-color: #ffffff; border: 2px solid #000000;"></canvas>                
                 </div>
                 <div class="row" style="margin: 10px;">
-                    <button onclick="animateTree()">Animate Solution</button>
+                    <button onclick="updateCanvas()">Next Step</button>
                 </div>
 
                 <div class="col-md-7">
@@ -44,7 +44,8 @@
 
         let solutionBoards = [];
         let n = 0;
-
+        let step = 1;
+    
         let request = null;
 
         function solveBoard(){
@@ -81,6 +82,7 @@
 
                     }
                     ctx.fillText(val, j * w + w/2, i * w + w/2);
+                    ctx.stroke();
                 }
             }
         }
@@ -109,9 +111,19 @@
             return board;
         }
 
-        function animateTree(){
-            for (k = 0; k < solutionBoards.length; k++){
-                drawBoard(n, solutionBoards[k]);
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+                currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
+        }
+
+        function updateCanvas(){
+            drawBoard(n, solutionBoards[step]);
+            step++;
+            if (step == solutionBoards.length){
+                step = 0;
             }
         }
 
@@ -138,6 +150,7 @@
             for (j = 0; j < solutionTree.length; j++){
                 solutionBoards.push(stringToBoard(n, solutionTree[j]));
             }
+    
 		}
 
         $('document').ready(setup);
