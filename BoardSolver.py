@@ -123,6 +123,7 @@ class Board(object):
 
         # determines solvability based on if n is even or odd and the number of
         # inversions
+
         if self.n % 2 == 0:
             if (self.zerorow + inversions) % 2 != 0:
                 return True

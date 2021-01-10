@@ -31,6 +31,8 @@ def solveBoard():
     algorithm = request.args.get('algorithm')
     iterations = int(request.args.get('iterations'))
 
+    print(algorithm)
+
     temp = [[0 for i in range(boardSize)] for j in range(boardSize)]
     tiles = tiles.strip(" ")
     tiles = tiles.split(',')
@@ -56,6 +58,7 @@ def solveBoard():
         response = make_response(html)
         return response
 
+    print(solutionTree)
     html = render_template('solvedBoard.html', initialBoard = ogboard.tilescopy, solutionTree = solutionTree, boardLength = ogboard.size())
     response = make_response(html)
     return response

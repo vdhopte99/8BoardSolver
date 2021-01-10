@@ -40,7 +40,7 @@
         const ctx = canvas.getContext("2d");
         ctx.lineWidth = 2;
 
-        let board = [];
+        let solutionBoards = [];
 
         let request = null;
 
@@ -71,7 +71,7 @@
             ctx.textAlign = 'center'
             for (i = 0; i < n; i++){
                 for (j = 0; j < n; j++){
-                    val = board[i][j];
+                    val = parseInt(board[i][j]);
                     if (val == 0){
                         ctx.fillStyle = "#000000";
                         ctx.fillRect(j * w, i * w, w, w);
@@ -93,11 +93,22 @@
             }
         }
 
-        function changeLength(n){
-            n = parseInt(n);
-            console.log(n);
-            board = randomBoard(n);
-            drawBoard(n, board);
+        function stringToBoard(n, string){
+            ints = string.split(",");
+            board = [];
+            for (i = 0; i < n; i++) {
+                board.push(ints.slice(0, n));
+                ints = ints.slice(-(ints.length - n));
+            }
+            return board;
+        }
+
+        function animateTree(n, solutionTree){
+
+            for (i = 0; i < solutionTree.length; i++){
+                board = stringToBoard(solutionTree[i]);
+                console.log(board);
+            }
         }
 
         function setup(){
@@ -107,53 +118,28 @@
             initialBoard = initialBoard.split("[").join("");
             initialBoard = initialBoard.split("]").join("");
             initialBoard = initialBoard.split(" ").join("");
-            initialBoard = initialBoard.split(",");
-                
-            if (n === 2){
-                temp = [
-                    [0, 0],
-                    [0, 0]
-                ];
-            }
-            else if (n === 3){
-                temp = [
-                    [0, 0, 0],
-                    [0, 0, 0],
-                    [0, 0, 0]
-                ];
-            }
-            else if (n === 4){
-                temp = [
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0]
-                ];
-            }
-            else {
-                temp = [
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0]
-                ];
+            
+            drawBoard(n, stringToBoard(n, initialBoard));
+
+            solutionTree = '{{solutionTree}}';
+            solutionTree = solutionTree.split(" ").join("");
+            solutionTree = solutionTree.split("[[").join("");
+            solutionTree = solutionTree.split("[").join("");
+            solutionTree = solutionTree.split(']],')
+
+            for (i = 0; i < solutionTree.length; i++){
+                solutionTree[i] = solutionTree[i].split("]").join(""); 
             }
 
-            counter = 0;
-            for (i = 0; i < n; i++){
-                for (j = 0; j < n; j++){
-                    temp[i][j] = initialBoard[counter];
-                    counter++;
-                }
+            for (i = 0; i < solutionTree.length; i++){
+                // console.log(stringToBoard(n, solutionTree[i]));
+                console.log("AAAAAA");
             }
-            initialBoard = temp;
-            drawBoard(n, initialBoard);
 
-            var solutionTree = '{{solutionTree}}';
-            solutionTree = solutionTree.split(']]')
+            
 
             console.log(solutionTree);
+
 		}
 
         $('document').ready(setup);
