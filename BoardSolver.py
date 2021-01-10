@@ -151,7 +151,7 @@ class SearchNode(object):
 
     def __lt__(self, other):
         if self.algorithm == "A*" and other.algorithm == "A*":
-            return self.board.givehamming() + self.numMoves < other.board.givehamming() + other.numMoves
+            return self.board.givemanhattan() + self.numMoves < other.board.givemanhattan() + other.numMoves
         elif self.algorithm == "GreedyBest" and other.algorithm == "GreedyBest":
             return self.board.givemanhattan() < other.board.givemanhattan()
         else:

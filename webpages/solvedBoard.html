@@ -20,9 +20,11 @@
                 <div class="col-md-5">
                     <canvas class="canvas" id="canvas" height="600" width="600" style="background-color: #ffffff; border: 2px solid #000000;"></canvas>                
                 </div>
+                <div class="row" style="margin: 10px;">
+                    <button onclick="animateTree()">Animate Solution</button>
+                </div>
 
                 <div class="col-md-7">
-                    <p>HAHAHAHA</p>
                     
                     
                 
@@ -41,6 +43,7 @@
         ctx.lineWidth = 2;
 
         let solutionBoards = [];
+        let n = 0;
 
         let request = null;
 
@@ -95,6 +98,9 @@
 
         function stringToBoard(n, string){
             ints = string.split(",");
+            for (i = 0; i < ints.length; i++) {
+                ints[i] = parseInt(ints[i]);
+            }
             board = [];
             for (i = 0; i < n; i++) {
                 board.push(ints.slice(0, n));
@@ -103,17 +109,15 @@
             return board;
         }
 
-        function animateTree(n, solutionTree){
-
-            for (i = 0; i < solutionTree.length; i++){
-                board = stringToBoard(solutionTree[i]);
-                console.log(board);
+        function animateTree(){
+            for (k = 0; k < solutionBoards.length; k++){
+                drawBoard(n, solutionBoards[k]);
             }
         }
 
         function setup(){
             var initialBoard = '{{initialBoard}}';
-            var n = parseInt('{{boardLength}}');
+            n = '{{boardLength}}';
 
             initialBoard = initialBoard.split("[").join("");
             initialBoard = initialBoard.split("]").join("");
@@ -131,15 +135,9 @@
                 solutionTree[i] = solutionTree[i].split("]").join(""); 
             }
 
-            for (i = 0; i < solutionTree.length; i++){
-                // console.log(stringToBoard(n, solutionTree[i]));
-                console.log("AAAAAA");
+            for (j = 0; j < solutionTree.length; j++){
+                solutionBoards.push(stringToBoard(n, solutionTree[j]));
             }
-
-            
-
-            console.log(solutionTree);
-
 		}
 
         $('document').ready(setup);
